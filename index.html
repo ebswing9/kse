@@ -1,392 +1,1476 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>학습 미션 웹앱</title>
-  <style>
-    /* -------------------------------------------------- */
-    /* [개선 7] PC 커스텀 스크롤바 (모던 디자인) */
-    /* -------------------------------------------------- */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #F1F3F5;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94A3B8;
-    }
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: #CBD5E1 #F1F3F5;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOREAN SYSTEM RECOVERY MODE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --panel-bg: #111827;
+            --panel-border: #1f2937;
+            --accent-green: #10b981;
+            --accent-cyan: #06b6d4;
+            --accent-amber: #f59e0b;
+            --accent-yellow: #facc15;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Pretendard', sans-serif;
-      background-color: #F8FAFC;
-      color: #1E293B;
-    }
+        /* 7. PC Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border: 1px solid var(--accent-cyan);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 16px;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans KR', 'Fira Code', sans-serif;
+            user-select: none;
+            word-break: keep-all;
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 6] 모바일 반응형 상단바 & 공간 튀어나옴 방지 */
-    /* -------------------------------------------------- */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background-color: #ffffff;
-      border-bottom: 1px solid #E2E8F0;
-      gap: 8px;
-    }
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 0; /* flex 자식 text-overflow 정상 동작 */
-      font-size: 0.9rem;
-    }
-    .user-name, .error-badge {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .logout-btn {
-      white-space: nowrap;
-      padding: 6px 12px;
-      background: #EF4444;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      flex-shrink: 0; /* 버튼이 눌리거나 줄어드는 것 방지 */
-    }
-    @media (max-width: 480px) {
-      .top-nav { padding: 8px 10px; }
-      .user-info { font-size: 0.75rem; }
-      .logout-btn { font-size: 0.75rem; padding: 4px 8px; }
-    }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 80%),
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 1] 로그인 폼 */
-    /* -------------------------------------------------- */
-    .login-box {
-      max-width: 360px;
-      margin: 60px auto;
-      padding: 24px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .login-form input {
-      padding: 10px 14px;
-      border: 1px solid #CBD5E1;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    .login-form button {
-      padding: 12px;
-      background: #2563EB;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 680px;
+            height: 85vh;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 16px;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 5] 2학기 데이터 해금(Unlocked) 노랑/주황 네온 효과 */
-    /* -------------------------------------------------- */
-    .semester-card {
-      padding: 18px;
-      border-radius: 12px;
-      text-align: center;
-      margin: 16px 0;
-      font-weight: bold;
-    }
-    .unlocked-semester {
-      background-color: #FFFBEB;
-      border: 2.5px solid #FF9F0A;
-      color: #D97706;
-      box-shadow: 0 0 15px rgba(255, 159, 10, 0.4);
-      animation: pulse-glow 2s infinite alternate;
-    }
-    @keyframes pulse-glow {
-      0% {
-        box-shadow: 0 0 8px rgba(255, 159, 10, 0.3);
-        transform: scale(1);
-      }
-      100% {
-        box-shadow: 0 0 18px rgba(255, 159, 10, 0.65);
-        transform: scale(1.01);
-      }
-    }
+        .terminal-header {
+            background: #0f172a;
+            padding: 10px 16px;
+            border-bottom: 1px solid var(--panel-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            flex-shrink: 0;
+            gap: 8px;
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 2] 미션 4: 수집 자모 가운데 정렬 */
-    /* -------------------------------------------------- */
-    .mission-card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #E2E8F0;
-    }
-    .jamo-container {
-      display: flex;
-      justify-content: center; /* 오른쪽 정렬 -> 가운데 정렬로 수정 */
-      align-items: center;
-      gap: 12px;
-      min-height: 50px;
-      background: #F1F5F9;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
+        .sys-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 3] 미션 5: 지시문 시각성 강화 및 자모 가로배치 */
-    /* -------------------------------------------------- */
-    .instruction-banner {
-      background-color: #FFF3C4;
-      color: #D97706;
-      font-size: 1.1rem;
-      font-weight: bold;
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: 2px solid #F59E0B;
-      text-align: center;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .jamo-grid {
-      display: flex;
-      flex-wrap: wrap; /* 'ㅅ'이 떨어지지 않고 윗줄에 수용되도록 Wrap 지정 */
-      justify-content: center;
-      gap: 10px;
-      padding: 16px;
-      background: #FAF5FF;
-      border-radius: 8px;
-    }
-    .jamo-item {
-      padding: 8px 16px;
-      background: white;
-      border: 1px solid #D8B4FE;
-      border-radius: 8px;
-      font-weight: bold;
-    }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
 
-    /* 모달 팝업 */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: white;
-      padding: 24px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 320px;
-      width: 90%;
-    }
-    .modal-btn {
-      margin-top: 16px;
-      padding: 8px 16px;
-      background: #F59E0B;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+        .status-badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            white-space: nowrap;
+        }
 
-    /* -------------------------------------------------- */
-    /* [개선 4] 미션 7: 5가지 구별되는 오브젝트 색상 */
-    /* -------------------------------------------------- */
-    .object-grid {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 12px;
-    }
-    .obj {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-    .obj-1 { background-color: #FF5964; } /* 빨강 */
-    .obj-2 { background-color: #35A7FF; } /* 파랑 */
-    .obj-3 { background-color: #FFC857; } /* 노랑 */
-    .obj-4 { background-color: #38B000; } /* 초록 */
-    .obj-5 { background-color: #9D4EDD; } /* 보라 */
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+            white-space: nowrap;
+        }
 
-    .hidden { display: none !important; }
-  </style>
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffffff;
+        }
+
+        .view-panel {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* SCREEN 0: ALERT */
+        #screen-alert {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            height: 100%;
+            cursor: pointer;
+            background: radial-gradient(circle, rgba(239,68,68,0.15) 0%, transparent 70%);
+        }
+
+        .alert-box {
+            border: 2px solid var(--accent-red);
+            padding: 40px;
+            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+            animation: blink 1.2s infinite alternate;
+        }
+
+        @keyframes blink {
+            from { opacity: 0.8; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1.02); }
+        }
+
+        .alert-title {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--accent-red);
+            font-family: 'Fira Code', monospace;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .alert-sub {
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .click-prompt {
+            font-size: 13px;
+            color: var(--accent-amber);
+            font-family: 'Fira Code', monospace;
+            animation: pulse 1s infinite;
+        }
+
+        /* SCREEN 1: ERROR INTERFACE */
+        #screen-error {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            gap: 25px;
+            height: 100%;
+        }
+
+        .glitch-icon {
+            font-size: 70px;
+            color: var(--accent-red);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+
+        .error-msg-box {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px dashed var(--accent-red);
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .error-msg-box h2 {
+            color: var(--accent-red);
+            margin-bottom: 12px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-primary:hover {
+            background: #22d3ee;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--panel-border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+        }
+
+        /* LOGIN PANEL */
+        #screen-login {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .login-card {
+            background: #0f172a;
+            border: 1px solid var(--accent-cyan);
+            border-radius: 16px;
+            padding: 35px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+        }
+
+        .login-title {
+            color: var(--accent-cyan);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            background: #1e293b;
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 15px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        /* DASHBOARD */
+        #screen-dashboard {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0f172a;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 50%;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 10px;
+            background: #1e293b;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            transition: width 0.4s ease;
+        }
+
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .folder-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 18px 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+        }
+
+        .folder-card:hover:not(.locked) {
+            border-color: var(--accent-cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.2);
+            background: rgba(15, 23, 42, 0.95);
+        }
+
+        .folder-card.recovered {
+            border-color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .folder-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        /* 5. 2학기 데이터 언락 스타일 극대화 */
+        .folder-card.sem2-unlocked {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            border-style: solid !important;
+            border-color: var(--accent-yellow) !important;
+            background: rgba(250, 204, 21, 0.12) !important;
+            box-shadow: 0 0 25px rgba(250, 204, 21, 0.4) !important;
+            animation: sem2Pulse 1.8s infinite alternate !important;
+        }
+
+        @keyframes sem2Pulse {
+            0% {
+                box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+                transform: scale(1);
+            }
+            100% {
+                box-shadow: 0 0 35px rgba(250, 204, 21, 0.7);
+                transform: scale(1.02);
+            }
+        }
+
+        .folder-icon {
+            font-size: 28px;
+            color: var(--accent-cyan);
+        }
+
+        .folder-card.recovered .folder-icon {
+            color: var(--accent-green);
+        }
+
+        .folder-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .folder-status {
+            font-size: 11px;
+            font-family: 'Fira Code', monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+
+        .folder-card.recovered .folder-status {
+            color: var(--accent-green);
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        /* MISSION WORKSPACE */
+        #screen-mission {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+
+        .mission-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        .mission-title-box h3 {
+            color: var(--accent-cyan);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mission-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .mission-body {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* MISSION 1 STYLES */
+        .rearrange-container { width: 100%; max-width: 750px; display: flex; flex-direction: column; gap: 25px; }
+        .sub-quiz-card { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid var(--panel-border); }
+        .quiz-target-area { min-height: 50px; background: #0f172a; border: 2px dashed var(--accent-cyan); border-radius: 8px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 15px; }
+        .quiz-pool-area { display: flex; flex-wrap: wrap; gap: 8px; }
+        .word-chip { padding: 8px 14px; background: #334155; color: #fff; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; border: 1px solid var(--panel-border); }
+        .word-chip:hover { background: var(--accent-cyan); color: #000; }
+
+        /* MISSION 2 STYLES */
+        .text-passage-box { width: 100%; max-width: 800px; background: #0f172a; border: 1px solid var(--panel-border); border-radius: 12px; padding: 25px; line-height: 2; font-size: 15px; }
+        .sentence-span { padding: 4px 6px; border-radius: 4px; cursor: pointer; transition: background 0.2s; position: relative; display: inline; }
+        .sentence-span:hover { background: rgba(245, 158, 11, 0.2); outline: 1px dashed var(--accent-amber); }
+        .sentence-span.selected { background: rgba(239, 68, 68, 0.25); outline: 1px solid var(--accent-red); }
+        .del-popover-btn { display: none; position: absolute; top: -35px; left: 50%; transform: translateX(-50%); background: var(--accent-red); color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.5); z-index: 10; }
+        .sentence-span.selected .del-popover-btn { display: block; }
+        .sentence-span.deleted { text-decoration: line-through; opacity: 0.3; pointer-events: none; }
+
+        /* MISSION 3 STYLES */
+        .m3-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px; }
+        .m3-pool-box { background: #0f172a; border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 15px; }
+        .m3-pool-title { font-size: 13px; color: var(--accent-cyan); margin-bottom: 10px; font-weight: bold; }
+        .m3-chips-wrapper { display: flex; flex-wrap: wrap; gap: 10px; }
+        .m3-chip { padding: 8px 16px; background: #1e293b; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .m3-chip.selected { background: var(--accent-cyan); color: #000; box-shadow: 0 0 10px var(--accent-cyan); }
+        .m3-sentence-list { display: flex; flex-direction: column; gap: 15px; }
+        .m3-sentence-item { background: #1e293b; border: 1px solid var(--panel-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .m3-sentence-text { font-size: 15px; line-height: 1.6; color: var(--text-main); }
+        .m3-target-slot { min-height: 42px; background: #0f172a; border: 2px dashed var(--accent-amber); border-radius: 8px; padding: 6px 14px; display: flex; align-items: center; justify-content: space-between; color: var(--text-muted); font-size: 13px; cursor: pointer; }
+        .m3-target-slot.filled { border-style: solid; border-color: var(--accent-green); color: var(--accent-green); font-weight: bold; font-size: 15px; background: rgba(16, 185, 129, 0.1); }
+
+        /* MISSION 4 STYLES */
+        .m4-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 15px; height: 100%; }
+        .m4-prompt-box { background: #0f172a; border: 1px solid var(--accent-amber); border-radius: 12px; padding: 15px; text-align: center; line-height: 1.6; font-size: 14px; color: var(--accent-amber); }
+        .m4-basket-bar { background: #1e293b; border: 1px solid var(--panel-border); border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        /* 2. 수집 자모 가운데 정렬 */
+        .m4-basket-items { display: flex; gap: 8px; min-height: 36px; align-items: center; flex-wrap: wrap; justify-content: center; width: 100%; }
+        .m4-collected-chip { padding: 6px 12px; background: var(--accent-cyan); color: #000; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 0 8px rgba(6, 182, 212, 0.4); }
+        .m4-game-area { position: relative; width: 100%; height: 280px; background: #090d16; border: 1px solid var(--accent-cyan); border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.1); }
+        @keyframes fallAnim { 0% { top: -45px; } 100% { top: 290px; } }
+        .falling-jamo { position: absolute; padding: 8px 14px; background: rgba(30, 41, 59, 0.95); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5); animation: fallAnim 3.8s linear forwards; }
+        .m4-sorting-panel { display: flex; flex-direction: column; align-items: center; gap: 20px; background: #0f172a; border: 1px solid var(--accent-cyan); border-radius: 12px; padding: 20px; width: 100%; }
+        .m4-slots-wrapper { display: flex; gap: 12px; justify-content: center; width: 100%; }
+        .m4-slot { width: 55px; height: 55px; border: 2px dashed var(--accent-amber); border-radius: 10px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: bold; color: var(--accent-cyan); cursor: pointer; transition: all 0.2s; }
+        .m4-slot.filled { border-style: solid; border-color: var(--accent-green); background: rgba(16, 185, 129, 0.15); }
+        .m4-cards-pool { display: flex; gap: 12px; min-height: 55px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .m4-jamo-card { width: 50px; height: 50px; background: var(--accent-cyan); color: #000; font-size: 20px; font-weight: bold; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3); }
+
+        /* MISSION 5 STYLES */
+        /* 3. 균등 격자 배치로 줄 떨어짐 방지 */
+        .m5-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(55px, 1fr)); gap: 10px; width: 100%; max-width: 650px; margin-top: 15px; }
+        .m5-tile { height: 58px; background: #1e293b; border: 2px solid var(--panel-border); border-radius: 10px; color: var(--text-main); font-size: 22px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .m5-tile:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+        .m5-tile.selected { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); box-shadow: 0 0 12px var(--accent-cyan); }
+
+        /* MISSION 6 STYLES */
+        .m6-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 650px; }
+        .m6-item { background: #1e293b; border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; font-size: 15px; }
+        .m6-btn-box { display: flex; gap: 6px; }
+        .m6-btn { background: #0f172a; border: 1px solid var(--panel-border); color: var(--accent-cyan); width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .m6-btn:hover { background: var(--accent-cyan); color: #000; }
+
+        /* MISSION 7 STYLES */
+        .m7-container { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; max-width: 850px; width: 100%; margin-top: 20px; }
+        .m7-obj-card { background: #0f172a; border: 1px solid var(--panel-border); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; width: 145px; }
+        .m7-obj-icon { width: 65px; height: 65px; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 28px; cursor: pointer; border: 2px solid var(--panel-border); transition: all 0.2s; }
+        .m7-obj-icon:hover { transform: scale(1.08); }
+        
+        /* 4. 오브젝트 색상 5가지 전면 차별화 */
+        .m7-obj-card:nth-child(1) .m7-obj-icon { color: var(--accent-amber); border-color: var(--accent-amber); }
+        .m7-obj-card:nth-child(2) .m7-obj-icon { color: var(--accent-cyan); border-color: var(--accent-cyan); }
+        .m7-obj-card:nth-child(3) .m7-obj-icon { color: var(--accent-green); border-color: var(--accent-green); }
+        .m7-obj-card:nth-child(4) .m7-obj-icon { color: var(--accent-purple); border-color: var(--accent-purple); }
+        .m7-obj-card:nth-child(5) .m7-obj-icon { color: var(--accent-pink); border-color: var(--accent-pink); }
+
+        .m7-switch-btn { width: 100%; padding: 8px 0; border-radius: 8px; border: 1px solid var(--panel-border); background: #1e293b; color: var(--text-muted); font-size: 13px; font-weight: bold; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .m7-switch-btn.on { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); color: var(--accent-green); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+
+        /* MISSION 8 STYLES */
+        .m8-passage { background: #0f172a; border: 1px solid var(--panel-border); border-radius: 12px; padding: 22px; line-height: 2; font-size: 15px; max-width: 750px; }
+        .m8-pw-input { width: 220px; text-align: center; letter-spacing: 12px; font-size: 28px; font-family: 'Fira Code', monospace; padding: 10px; background: #0f172a; border: 2px solid var(--accent-cyan); border-radius: 10px; color: var(--accent-cyan); outline: none; margin-top: 15px; }
+
+        /* MODAL STYLES */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #0f172a; border: 2px solid var(--accent-cyan); border-radius: 16px; padding: 30px; max-width: 480px; width: 90%; text-align: center; box-shadow: 0 0 30px rgba(6, 182, 212, 0.3); position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+
+        /* SEMESTER 2 SCREEN */
+        #screen-sem2-complete { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; gap: 20px; }
+
+        /* Toast */
+        .toast { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); padding: 10px 20px; border-radius: 20px; background: var(--accent-red); color: #fff; font-size: 13px; font-weight: 600; transition: transform 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 200; text-align: center; max-width: 90%; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: var(--accent-green); color: #000; }
+
+        /* 6. 모바일 헤더 공간 부족 문제 반응형 커스텀 */
+        @media (max-width: 768px) {
+            body { padding: 0; }
+            .app-container { height: 100vh; border-radius: 0; border: none; }
+            .terminal-header { padding: 8px 10px; }
+            .sys-title { font-size: 11px; }
+            .status-badge { font-size: 9px; padding: 2px 5px; }
+            .btn-logout { font-size: 10px; padding: 2px 6px; }
+            .view-panel { padding: 16px; }
+            .folder-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .m7-container { gap: 10px; }
+            .m7-obj-card { width: 45%; padding: 12px; }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- 상단 헤더 -->
-  <header class="top-nav">
-    <div class="user-info">
-      <span id="user-display">로그인이 필요합니다</span>
-      <span class="error-badge" style="color: #EF4444; font-size: 0.75rem;">[시스템 정상]</span>
-    </div>
-    <button id="logout-btn" class="logout-btn hidden" onclick="handleLogout()">로그아웃</button>
-  </header>
-
-  <div class="container">
-    <!-- [개선 1] 로그인 영역 (Form 태그 사용으로 엔터키 제출 가능) -->
-    <div id="login-section" class="login-box">
-      <h2 style="margin-top:0; text-align:center;">접속 인증</h2>
-      <form class="login-form" onsubmit="handleLogin(event)">
-        <input type="text" id="username" placeholder="아이디 입력" required />
-        <input type="password" id="password" placeholder="비밀번호 입력" required />
-        <button type="submit">접속 인증</button>
-      </form>
+<div class="app-container">
+    <!-- Terminal Header -->
+    <div class="terminal-header">
+        <div class="sys-title">
+            <i class="fa-solid fa-terminal"></i> KOREAN_SYS_RECOVERY
+        </div>
+        <div class="header-controls">
+            <button class="btn-logout" id="btn-logout" onclick="handleLogout()" style="display: none;">
+                <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+            </button>
+            <div class="status-badge" id="sys-status">CRITICAL ERROR</div>
+        </div>
     </div>
 
-    <!-- 메인 미션 화면 (로그인 성공 시 표시) -->
-    <main id="main-section" class="hidden">
-      
-      <!-- [개선 5] 2학기 데이터 해금(Unlocked) 표시 -->
-      <section className="semester-card unlocked-semester" class="semester-card unlocked-semester">
-        🔓 2학기 학습 데이터가 해금되었습니다!
-      </section>
-
-      <!-- [개선 2] 4번 미션 영역 -->
-      <section class="mission-card">
-        <h3>4번 미션: 자모 수집</h3>
-        <p style="font-size:0.85rem; color:#64748B;">* 낙하 속도 및 발생량 2배 설정 적용됨</p>
-        <div class="jamo-container">
-          <!-- 가운데 정렬 처리됨 -->
-          <span>ㄱ</span><span>ㄴ</span><span>ㄷ</span><span>ㄹ</span>
+    <!-- SCREEN 0: ALERT -->
+    <div class="view-panel" id="screen-alert" onclick="goToErrorScreen()">
+        <div class="alert-box">
+            <div class="alert-title">SYSTEM ERROR</div>
+            <div class="alert-sub">심각한 시스템 오류가 발생했습니다.<br>국어 학습 데이터에 접근할 수 없습니다.</div>
+            <div class="click-prompt">[ 화면을 클릭하여 복구 모드로 진입하십시오 ]</div>
         </div>
-      </section>
-
-      <!-- [개선 3] 5번 미션 영역 -->
-      <section class="mission-card">
-        <h3>5번 미션</h3>
-        <!-- 문제 영역 내 지시문 대형 배너 -->
-        <div class="instruction-banner">
-          📢 [지시문] 잇몸소리 / 파열음 / 중모음을 선택하세요!
-        </div>
-        <!-- 'ㅅ' 줄바꿈 현상 방지 레이아웃 -->
-        <div class="jamo-grid">
-          <div class="jamo-item">ㄱ</div>
-          <div class="jamo-item">ㄴ</div>
-          <div class="jamo-item">ㄷ</div>
-          <div class="jamo-item">ㄹ</div>
-          <div class="jamo-item">ㅁ</div>
-          <div class="jamo-item">ㅂ</div>
-          <div class="jamo-item">ㅅ</div>
-        </div>
-      </section>
-
-      <!-- [개선 4] 7번 미션 영역 -->
-      <section class="mission-card">
-        <h3>7번 미션: 오브젝트 구별</h3>
-        <div class="object-grid">
-          <div class="obj obj-1">1</div>
-          <div class="obj obj-2">2</div>
-          <div class="obj obj-3">3</div>
-          <div class="obj obj-4">4</div>
-          <div class="obj obj-5">5</div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- [개선 3] 5번 미션 안내 모달 팝업 -->
-  <div id="mission-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <h3 style="color:#D97706; margin-top:0;">미션 5 지시사항</h3>
-      <p><strong>잇몸소리 / 파열음 / 중모음</strong>을 순서대로 찾아 선택하세요!</p>
-      <button class="modal-btn" onclick="closeModal()">확인하고 시작하기</button>
     </div>
-  </div>
 
-  <script>
-    // 구글 앱스 스크립트 Web App URL을 여기에 넣으세요
-    const GAS_WEB_APP_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";
+    <!-- SCREEN 1: ERROR INTERFACE -->
+    <div class="view-panel" id="screen-error">
+        <div class="glitch-icon">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="error-msg-box">
+            <h2>⚠️ SYSTEM DATA CORRUPTED</h2>
+            <p>국어 교과서의 핵심 학습 데이터가 손상되었습니다.<br>
+            손상된 <strong>데이터 섹터</strong>를 미션을 통해 복원하십시오.<br><br>
+            데이터 복원 작업을 시작하려면 아래 버튼을 누르세요.</p>
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="showLoginScreen()">[YES] 복구 시작</button>
+            <button class="btn btn-secondary" onclick="showToast('시스템 복구가 지연되면 데이터가 영구 손실됩니다!')">[NO] 종료</button>
+        </div>
+    </div>
 
-    // 1. 엔터키/버튼 로그인 처리
-    function handleLogin(event) {
-      event.preventDefault(); // 페이지 새로고침 방지
-      const username = document.getElementById('username').value;
-      
-      if (!username) return;
+    <!-- SCREEN LOGIN -->
+    <div class="view-panel" id="screen-login">
+        <div class="login-card">
+            <div class="login-title"><i class="fa-solid fa-lock"></i> SYSTEM ACCESS LOGIN</div>
+            <div class="form-group">
+                <label for="team-select">소속 팀 선택</label>
+                <select id="team-select" class="form-control">
+                    <option value="">팀을 선택하세요...</option>
+                    <option value="1팀">1팀</option>
+                    <option value="2팀">2팀</option>
+                    <option value="3팀">3팀</option>
+                    <option value="4팀">4팀</option>
+                    <option value="5팀">5팀</option>
+                    <option value="6팀">6팀</option>
+                    <option value="7팀">7팀</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="team-pw">비밀번호 입력</label>
+                <!-- 1. 엔터키 감지를 위한 이벤트 수신기 매핑 -->
+                <input type="password" id="team-pw" class="form-control" placeholder="비밀번호를 입력하세요" onkeyup="handleKeyupLogin(event)">
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="handleLogin()">접속 인증</button>
+        </div>
+    </div>
 
-      // UI 변경
-      document.getElementById('user-display').innerText = `👤 ${username}님`;
-      document.getElementById('login-section').classList.add('hidden');
-      document.getElementById('main-section').classList.remove('hidden');
-      document.getElementById('logout-btn').classList.remove('hidden');
+    <!-- SCREEN 2: DASHBOARD -->
+    <div class="view-panel" id="screen-dashboard">
+        <div class="dashboard-header">
+            <div>
+                <h3 style="color: var(--accent-cyan); font-size: 16px;">
+                    <i class="fa-solid fa-microchip"></i> RECOVERY SECTOR MAP 
+                    <span id="user-team-display" style="color: var(--accent-amber); font-size: 14px; margin-left: 10px;"></span>
+                </h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">복원할 데이터 섹터를 선택하여 미션을 수행하세요.</p>
+            </div>
+            <div class="progress-container">
+                <span style="font-size: 12px; font-family: 'Fira Code';" id="progress-text">0 / 8</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </div>
 
-      // 5번 미션 모달 팝업 표시
-      document.getElementById('mission-modal').classList.remove('hidden');
+        <div class="folder-grid">
+            <div class="folder-card" id="folder-1" onclick="openMission(1)">
+                <i class="fa-solid fa-align-center folder-icon"></i>
+                <div class="folder-title">[01] 시의 화자</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
 
-      // [개선 8] 구글 앱스 스크립트로 로그인 데이터 전송 (비동기 처리)
-      sendDataToGAS({ type: 'LOGIN', user: username, timestamp: new Date() });
+            <div class="folder-card" id="folder-2" onclick="openMission(2)">
+                <i class="fa-solid fa-book-open folder-icon"></i>
+                <div class="folder-title">[02] 소설의 서술자</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-3" onclick="openMission(3)">
+                <i class="fa-solid fa-layer-group folder-icon"></i>
+                <div class="folder-title">[03] 설명 방법</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-4" onclick="openMission(4)">
+                <i class="fa-solid fa-brain folder-icon"></i>
+                <div class="folder-title">[04] 논증 방법</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-5" onclick="openMission(5)">
+                <i class="fa-solid fa-language folder-icon"></i>
+                <div class="folder-title">[05] 음운 체계</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-6" onclick="openMission(6)">
+                <i class="fa-solid fa-list-ol folder-icon"></i>
+                <div class="folder-title">[06] 발표 과정</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-7" onclick="openMission(7)">
+                <i class="fa-solid fa-lightbulb folder-icon"></i>
+                <div class="folder-title">[07] 역설</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <div class="folder-card" id="folder-8" onclick="openMission(8)">
+                <i class="fa-solid fa-film folder-icon"></i>
+                <div class="folder-title">[08] 영상 매체 자료</div>
+                <div class="folder-status">DAMAGED</div>
+            </div>
+
+            <!-- 2학기 데이터 잠금 섹션 -->
+            <div class="folder-card locked" id="folder-sem2" onclick="openSem2Mission()" style="grid-column: 1 / -1;">
+                <i class="fa-solid fa-lock folder-icon" id="sem2-icon" style="color: var(--accent-amber);"></i>
+                <div class="folder-title" id="sem2-title">[??] 2학기 데이터</div>
+                <div class="folder-status" id="sem2-status">LOCKED (1~8 완료 필요)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: MISSION WORKSPACE -->
+    <div class="view-panel" id="screen-mission">
+        <div class="mission-header">
+            <div class="mission-title-box">
+                <h3 id="m-title"><i class="fa-solid fa-puzzle-piece"></i> MISSION TITLE</h3>
+                <div class="mission-desc" id="m-desc">Mission description text goes here.</div>
+            </div>
+            <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="returnToDashboard()">
+                <i class="fa-solid fa-arrow-left"></i> 목록으로
+            </button>
+        </div>
+
+        <div class="mission-body" id="m-body"></div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 10px; flex-shrink: 0;">
+            <button class="btn btn-primary" id="m-submit-btn" onclick="checkCurrentMission()">[EXECUTE] 데이터 복원 실행</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: 2학기 데이터 미션 완료 화면 -->
+    <div class="view-panel" id="screen-sem2-complete">
+        <div style="font-size: 70px; color: var(--accent-yellow);">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h1 style="color: var(--accent-yellow); font-size: 36px; letter-spacing: 2px;">MISSION COMPLETE</h1>
+        <p style="color: var(--text-muted); font-size: 14px;">선생님에게 제출하세요</p>
+        <button class="btn btn-secondary" style="margin-top: 30px;" onclick="returnToDashboard()">[ 확인 ]</button>
+    </div>
+
+    <!-- General Modal -->
+    <div class="modal-overlay" id="modal-popup">
+        <div class="modal-box">
+            <div class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
+            <div id="modal-content" style="line-height: 1.6; font-size: 16px; margin-top: 10px;"></div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast-msg">Notification Message</div>
+</div>
+
+<script>
+const TEAM_CREDENTIALS = {
+    '1팀': ['문득', 'ansemr', 'ANSEMR'],
+    '2팀': ['이번', 'dlqjs', 'DLQJS'],
+    '3팀': ['어머나', 'djajsk', 'DJAJSK'],
+    '4팀': ['처음', 'cjdma', 'CJDMA'],
+    '5팀': ['이런', 'dlfjs', 'DLFJS'],
+    '6팀': ['내년', 'sosus', 'SOSUS'],
+    '7팀': ['그리고', 'rmflrh', 'RMFLRH']
+};
+
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoJZQaMGXPxqt8NyeZbB6k7mHzLRz5M6YocaKqeGsGxYZFeq8vwpB3qw0xSqnLD5WP/exec";
+
+let currentTeam = "";
+let startTime = null;
+let recovered = [false, false, false, false, false, false, false, false]; // 총 8개
+let currentMission = 0;
+let syncInterval = null;
+
+/* Mission 3 & 4 Variables */
+let m3SelectedChip = null;
+let m3Answers = { 1: null, 2: null, 3: null };
+
+const M4_ALL_CONSONANTS = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ', 'ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
+const M4_ALL_VOWELS     = ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅔ', 'ㅚ', 'ㅟ', 'ㅑ', 'ㅕ', 'ㅛ', 'ㅠ', 'ㅒ', 'ㅖ', 'ㅘ', 'ㅙ', 'ㅝ', 'ㅞ', 'ㅢ'];
+const M4_ALL_JAMOS      = [...M4_ALL_CONSONANTS, ...M4_ALL_VOWELS];
+const M4_TARGET_SEQUENCE = ['ㄱ', 'ㅟ', 'ㄴ', 'ㅏ', 'ㅂ'];
+let m4GameInterval = null;
+let m4CollectedJamos = [];
+let m4Phase = 1;
+let m4SlotState = [null, null, null, null, null];
+
+/* Mission 5 Variables */
+let m5Step = 1;
+const M5_CONSONANTS = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ', 'ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
+const M5_VOWELS = ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ', 'ㅡ', 'ㅣ', 'ㅐ', 'ㅔ', 'ㅚ', 'ㅟ'];
+let m5Selected = [];
+
+/* Mission 6 Variables */
+const M6_ORIGINAL = [
+    "발표 계획하기",
+    "자료 수집하고 재구성하기",
+    "내용 조직하기",
+    "발표 연습하기",
+    "말하기 과정을 점검·조정하며 발표하기",
+    "평가 및 개선 계획 세우기"
+];
+let m6CurrentList = [];
+
+/* Mission 7 Variables */
+const M7_TEXTS = [
+    "난 네가 싫어졌어 보기 싫어 더 이상",
+    "나는 이제 너 없이도 너를 좋아할 수 있다",
+    "이것은 소리 없는 아우성",
+    "이웃집은 천 리 길",
+    "나를 이곳에 오도록 해서 고맙다"
+];
+let m7Switches = [false, false, false, false, false];
+
+window.addEventListener('DOMContentLoaded', () => {
+    checkSavedSession();
+});
+
+function syncWithServer() {
+    if (!currentTeam || !GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("선생님의_구글")) return;
+    const url = `${GAS_WEB_APP_URL}?action=getSync&team=${encodeURIComponent(currentTeam)}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data.result === 'success' && Array.isArray(data.clearedMissions)) {
+                let updated = false;
+                data.clearedMissions.forEach(mNum => {
+                    const idx = mNum - 1;
+                    if (idx >= 0 && idx < recovered.length && !recovered[idx]) {
+                        recovered[idx] = true;
+                        updated = true;
+                    }
+                });
+                if (updated) {
+                    localStorage.setItem('recovery_progress', JSON.stringify(recovered));
+                    applyRecoveredUI();
+                    updateProgress();
+                }
+            }
+        })
+        .catch(err => console.error(err));
+}
+
+function applyRecoveredUI() {
+    recovered.forEach((isRec, idx) => {
+        const card = document.getElementById(`folder-${idx + 1}`);
+        if (card) {
+            if (isRec) {
+                card.classList.add('recovered');
+                card.querySelector('.folder-status').textContent = 'RECOVERED';
+            } else {
+                card.classList.remove('recovered');
+                card.querySelector('.folder-status').textContent = 'DAMAGED';
+            }
+        }
+    });
+
+    // 5. 2학기 데이터 활성화 색상(노란색/주황색 계열) 및 강조 이펙트 반영
+    const allCleared = recovered.every(v => v === true);
+    const sem2Card = document.getElementById('folder-sem2');
+    if (sem2Card) {
+        if (allCleared) {
+            sem2Card.classList.remove('locked');
+            sem2Card.classList.add('sem2-unlocked');
+            document.getElementById('sem2-icon').className = 'fa-solid fa-unlock-keyhole folder-icon';
+            document.getElementById('sem2-icon').style.color = 'var(--accent-yellow)';
+            document.getElementById('sem2-status').textContent = 'UNLOCKED';
+            document.getElementById('sem2-status').style.color = 'var(--accent-yellow)';
+            document.getElementById('sem2-status').style.backgroundColor = 'rgba(250, 204, 21, 0.2)';
+        } else {
+            sem2Card.classList.add('locked');
+            sem2Card.classList.remove('sem2-unlocked');
+            document.getElementById('sem2-icon').className = 'fa-solid fa-lock folder-icon';
+            document.getElementById('sem2-icon').style.color = 'var(--accent-amber)';
+            document.getElementById('sem2-status').textContent = 'LOCKED (1~8 완료 필요)';
+            document.getElementById('sem2-status').style.color = 'var(--text-muted)';
+            document.getElementById('sem2-status').style.backgroundColor = 'rgba(255,255,255,0.05)';
+        }
     }
+}
 
-    function handleLogout() {
-      document.getElementById('login-section').classList.remove('hidden');
-      document.getElementById('main-section').classList.add('hidden');
-      document.getElementById('logout-btn').classList.add('hidden');
-      document.getElementById('user-display').innerText = "로그인이 필요합니다";
+function startSyncPolling() {
+    stopSyncPolling();
+    syncWithServer();
+    syncInterval = setInterval(syncWithServer, 4000);
+}
+
+function stopSyncPolling() {
+    if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }
+}
+
+function checkSavedSession() {
+    const savedTeam = localStorage.getItem('recovery_team');
+    const savedRecovered = localStorage.getItem('recovery_progress');
+    if (savedTeam) {
+        currentTeam = savedTeam;
+        if (savedRecovered) {
+            try { recovered = JSON.parse(savedRecovered); } catch(e) {}
+        }
+        document.getElementById('user-team-display').textContent = `[ ${currentTeam} ]`;
+        document.getElementById('btn-logout').style.display = 'inline-block';
+        applyRecoveredUI();
+        updateProgress();
+        document.getElementById('screen-alert').style.display = 'none';
+        document.getElementById('screen-error').style.display = 'none';
+        document.getElementById('screen-login').style.display = 'none';
+        document.getElementById('screen-dashboard').style.display = 'flex';
+        startSyncPolling();
     }
+}
 
-    function closeModal() {
-      document.getElementById('mission-modal').classList.add('hidden');
-    }
+function showToast(msg, isSuccess = false) {
+    const toast = document.getElementById('toast-msg');
+    toast.textContent = msg;
+    toast.className = 'toast show ' + (isSuccess ? 'success' : '');
+    setTimeout(() => { toast.className = 'toast'; }, 2500);
+}
 
-    // [개선 8] 구글 앱스 스크립트 연동 지연 방지 (낙관적 데이터 전송)
-    function sendDataToGAS(payload) {
-      if (GAS_WEB_APP_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL") return;
+function goToErrorScreen() {
+    document.getElementById('screen-alert').style.display = 'none';
+    document.getElementById('screen-error').style.display = 'flex';
+}
 
-      // 화면 대기시간(로딩)을 만들지 않고 백그라운드에서 빠르게 전송
-      fetch(GAS_WEB_APP_URL, {
+function showLoginScreen() {
+    document.getElementById('screen-error').style.display = 'none';
+    document.getElementById('screen-login').style.display = 'flex';
+}
+
+function sendResultToGoogleSheet(teamName, missionNo) {
+    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("선생님의_구글")) return;
+    const formData = new URLSearchParams();
+    formData.append("team", teamName);
+    formData.append("mission", missionNo);
+    formData.append("status", "RECOVERED");
+
+    fetch(GAS_WEB_APP_URL, {
         method: 'POST',
-        mode: 'no-cors', // CORS 대기시간을 줄여줌
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error("GAS 전송 오류:", err));
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+    }).catch(err => console.error(err));
+}
+
+/* 1. 엔터키로 로그인 실행 */
+function handleKeyupLogin(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        handleLogin();
     }
-  </script>
+}
+
+function handleLogin() {
+    const team = document.getElementById('team-select').value;
+    const pw = document.getElementById('team-pw').value.trim();
+    if (!team) { showToast("소속 팀을 선택해주세요!"); return; }
+
+    if (TEAM_CREDENTIALS[team] && TEAM_CREDENTIALS[team].includes(pw)) {
+        currentTeam = team;
+        localStorage.setItem('recovery_team', currentTeam);
+        localStorage.setItem('recovery_progress', JSON.stringify(recovered));
+        document.getElementById('user-team-display').textContent = `[ ${currentTeam} ]`;
+        document.getElementById('btn-logout').style.display = 'inline-block';
+        document.getElementById('screen-login').style.display = 'none';
+        document.getElementById('screen-dashboard').style.display = 'flex';
+        showToast(`${currentTeam} 로그인 성공.`, true);
+        sendResultToGoogleSheet(currentTeam, 0);
+        startSyncPolling();
+    } else {
+        showToast("비밀번호가 올바르지 않습니다.");
+    }
+}
+
+function handleLogout() {
+    stopM4Game();
+    stopSyncPolling();
+    localStorage.clear();
+    currentTeam = "";
+    recovered = [false, false, false, false, false, false, false, false];
+    document.getElementById('btn-logout').style.display = 'none';
+    applyRecoveredUI();
+    updateProgress();
+    document.getElementById('screen-dashboard').style.display = 'none';
+    document.getElementById('screen-mission').style.display = 'none';
+    document.getElementById('screen-sem2-complete').style.display = 'none';
+    document.getElementById('screen-login').style.display = 'flex';
+    showToast("로그아웃되었습니다.");
+}
+
+function returnToDashboard() {
+    stopM4Game();
+    document.getElementById('screen-mission').style.display = 'none';
+    document.getElementById('screen-sem2-complete').style.display = 'none';
+    document.getElementById('screen-dashboard').style.display = 'flex';
+}
+
+function updateProgress() {
+    const count = recovered.filter(val => val).length;
+    document.getElementById('progress-text').textContent = `${count} / 8`;
+    document.getElementById('progress-fill').style.width = `${(count / 8) * 100}%`;
+}
+
+function openMission(id) {
+    stopM4Game();
+    currentMission = id;
+    document.getElementById('screen-dashboard').style.display = 'none';
+    document.getElementById('screen-mission').style.display = 'flex';
+
+    const body = document.getElementById('m-body');
+    const title = document.getElementById('m-title');
+    const desc = document.getElementById('m-desc');
+    body.innerHTML = '';
+
+    if (id === 1) {
+        title.innerHTML = `<i class="fa-solid fa-align-center"></i> [01] 시의 화자 / 단어 배열`;
+        desc.textContent = "화자의 뜻과 역할에 대한 설명을 올바르게 배열하세요.";
+        body.innerHTML = `
+            <div class="rearrange-container">
+                <div class="sub-quiz-card">
+                    <div style="font-size:14px; margin-bottom:8px; color:var(--accent-amber);">Q1. 화자의 뜻</div>
+                    <div class="quiz-target-area" id="target-1-1"></div>
+                    <div class="quiz-pool-area" id="pool-1-1"></div>
+                </div>
+                <div class="sub-quiz-card">
+                    <div style="font-size:14px; margin-bottom:8px; color:var(--accent-amber);">Q2. 화자의 역할</div>
+                    <div class="quiz-target-area" id="target-1-2"></div>
+                    <div class="quiz-pool-area" id="pool-1-2"></div>
+                </div>
+            </div>`;
+        initMission1();
+    } else if (id === 2) {
+        title.innerHTML = `<i class="fa-solid fa-book-open"></i> [02] 소설의 서술자 / 오류 문장 삭제`;
+        desc.textContent = "지문에서 소설의 흐름상 어색하거나 잘못 들어간 '오류 문장'을 클릭하여 삭제하세요.";
+        const passage = [
+            "우리는 나란히 누워서 노래를 들었다.", "리베라는 완벽한 하모니를 만들 줄 알았다.",
+            "드보르자크의 원곡과는 다른 종류의 아름다움이 있었다.", "할머니는 살며시 눈을 뜨고 나를 바라봤다.",
+            "\"너 그거 아니? 아름다운 건 어떤 아득한 그리움을 일으켜. 아득히 먼, 그리움이 천천히 밀려와.\"",
+            "역시나 이해되지 않았다.", "내가 애매한 표정을 선택하자 할머니는 너털웃음을 지었다.",
+            "\"나 갈 때 이 노래 부르면서 가야겠다. 우리 같이 연습하자!\"",
+            "\"귀가하실 때 부르겠다는 말씀이십니까?\"", "루빈은 역시나 엉뚱하게 대꾸했다.",
+            "집으로 걸어가면서 부르기엔 리듬이 느려적합하지 않았다.", "좀 더 경쾌한 노래를 검색하려다 할머니가 원하지 않을 것 같아 그만두었다."
+        ];
+        let htmlContent = `<div class="text-passage-box">`;
+        passage.forEach((sent, idx) => {
+            htmlContent += `<span class="sentence-span" data-idx="${idx}" onclick="selectSentence(this)">${sent}<button class="del-popover-btn" onclick="deleteSentence(event, this)">삭제</button></span> `;
+        });
+        htmlContent += `</div>`;
+        body.innerHTML = htmlContent;
+    } else if (id === 3) {
+        title.innerHTML = `<i class="fa-solid fa-layer-group"></i> [03] 설명 방법 매칭`;
+        desc.textContent = "설명 방법 아이템을 클릭한 후, 예시 문장의 빈칸 상자를 눌러 알맞게 매칭하세요.";
+        initMission3();
+    } else if (id === 4) {
+        title.innerHTML = `<i class="fa-solid fa-brain"></i> [04] 논증 방법 / 자모 수집 & 조합`;
+        desc.textContent = "[1단계] 떨어지는 자모 중 필요한 자모 5개를 클릭하여 수집하세요.";
+        initMission4();
+    } else if (id === 5) {
+        title.innerHTML = `<i class="fa-solid fa-language"></i> [05] 음운 체계`;
+        m5Step = 1;
+        initMission5();
+    } else if (id === 6) {
+        title.innerHTML = `<i class="fa-solid fa-list-ol"></i> [06] 발표 과정`;
+        desc.textContent = "올바른 발표 과정 순서에 맞게 항목들을 재배치하세요.";
+        initMission6();
+    } else if (id === 7) {
+        title.innerHTML = `<i class="fa-solid fa-lightbulb"></i> [07] 역설`;
+        desc.textContent = "각 오브젝트를 클릭하여 문장을 확인하고, 역설법에 해당하는 것의 버튼을 ON으로 켜세요.";
+        initMission7();
+    } else if (id === 8) {
+        title.innerHTML = `<i class="fa-solid fa-film"></i> [08] 영상 매체 자료`;
+        desc.textContent = "지문의 괄호 ①~④에 들어갈 말의 글자 수를 차례대로 조합하여 비밀번호를 입력하세요.";
+        initMission8();
+    }
+}
+
+/* MISSION 1 LOGIC */
+const m1_answers_text = { '1-1': "시에서 보고 생각하고 느낀 것을 말하는 이", '1-2': "시인이 표현하려는 바를 가장 효과적으로 드러내는 존재" };
+const m1_answers = { '1-1': m1_answers_text['1-1'].replace(/\s+/g, '').split(''), '1-2': m1_answers_text['1-2'].replace(/\s+/g, '').split('') };
+function initMission1() {
+    ['1-1', '1-2'].forEach(subId => {
+        const pool = [...m1_answers_text[subId].replace(/\s+/g, '').split('')].sort(() => Math.random() - 0.5);
+        const poolEl = document.getElementById(`pool-${subId}`);
+        const targetEl = document.getElementById(`target-${subId}`);
+        poolEl.innerHTML = ''; targetEl.innerHTML = '';
+        pool.forEach(char => {
+            const chip = document.createElement('div');
+            chip.className = 'word-chip'; chip.textContent = char;
+            chip.onclick = () => (chip.parentElement === poolEl ? targetEl : poolEl).appendChild(chip);
+            poolEl.appendChild(chip);
+        });
+    });
+}
+
+/* MISSION 2 LOGIC */
+function selectSentence(el) {
+    document.querySelectorAll('.sentence-span').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+}
+function deleteSentence(event, btn) {
+    event.stopPropagation();
+    const span = btn.parentElement;
+    span.classList.remove('selected'); span.classList.add('deleted');
+}
+
+/* MISSION 3 LOGIC */
+function initMission3() {
+    m3SelectedChip = null; m3Answers = { 1: null, 2: null, 3: null };
+    const methods = ["정의", "예시", "비교", "대조", "인과", "분류", "구분", "분석"];
+    let html = `<div class="m3-container"><div class="m3-pool-box"><div class="m3-pool-title"><i class="fa-solid fa-hand-pointer"></i> 설명 방법 선택</div><div class="m3-chips-wrapper">`;
+    methods.forEach(m => { html += `<div class="m3-chip" onclick="selectM3Chip(this, '${m}')">${m}</div>`; });
+    html += `</div></div><div class="m3-sentence-list">
+        <div class="m3-sentence-item"><div class="m3-sentence-text">1. 화성이 붉게 빛나는 까닭은 항성인 태양의 빛을 반사하기 때문이다.</div><div class="m3-target-slot" id="m3-slot-1" onclick="applyM3Chip(1)">[ 클릭하여 지정 ]</div></div>
+        <div class="m3-sentence-item"><div class="m3-sentence-text">2. 스스로 빛을 내는 항성인 태양과 달리 화성은 스스로 빛을 내지 않는 행성이다.</div><div class="m3-target-slot" id="m3-slot-2" onclick="applyM3Chip(2)">[ 클릭하여 지정 ]</div></div>
+        <div class="m3-sentence-item"><div class="m3-sentence-text">3. 화성과 지구는 지구형 행성에 속한다.</div><div class="m3-target-slot" id="m3-slot-3" onclick="applyM3Chip(3)">[ 클릭하여 지정 ]</div></div>
+    </div></div>`;
+    document.getElementById('m-body').innerHTML = html;
+}
+function selectM3Chip(el, val) {
+    document.querySelectorAll('.m3-chip').forEach(c => c.classList.remove('selected'));
+    if (m3SelectedChip === val) m3SelectedChip = null;
+    else { m3SelectedChip = val; el.classList.add('selected'); }
+}
+function applyM3Chip(idx) {
+    const slot = document.getElementById(`m3-slot-${idx}`);
+    if (m3SelectedChip) { m3Answers[idx] = m3SelectedChip; slot.textContent = `선택: [ ${m3SelectedChip} ]`; slot.classList.add('filled'); }
+    else { m3Answers[idx] = null; slot.textContent = `[ 클릭하여 지정 ]`; slot.classList.remove('filled'); }
+}
+
+/* MISSION 4 LOGIC */
+function initMission4() {
+    m4CollectedJamos = []; m4Phase = 1; m4SlotState = [null, null, null, null, null];
+    document.getElementById('m-body').innerHTML = `
+        <div class="m4-container">
+            <div class="m4-prompt-box"><i class="fa-solid fa-quote-left"></i> 전제들이 참이면 결론이 참일 가능성이 높은 논증 방법.<br>주로 개별적, 구체적 사례로부터 일반적 원리나 사실을 결론으로 이끌어 내는 형태. <i class="fa-solid fa-quote-right"></i></div>
+            <div id="m4-phase-1" style="display:flex; flex-direction:column; gap:12px; height:100%;">
+                <div class="m4-basket-bar"><span style="font-size:13px; font-weight:bold; color:var(--accent-cyan); width:100%; text-align:center;"><i class="fa-solid fa-basket-shopping"></i> 수집된 자모 목록</span><div class="m4-basket-items" id="m4-basket"></div></div>
+                <div class="m4-game-area" id="m4-game-area"></div>
+            </div>
+            <div id="m4-phase-2" style="display:none;" class="m4-sorting-panel">
+                <div style="font-size:15px; color:var(--accent-cyan); font-weight:bold;">올바른 순서대로 클릭하여 완성하세요!</div>
+                <div class="m4-slots-wrapper">${[0,1,2,3,4].map(i => `<div class="m4-slot" onclick="clearM4Slot(${i})"></div>`).join('')}</div>
+                <div class="m4-cards-pool" id="m4-cards-pool"></div>
+            </div>
+        </div>`;
+    startM4Game();
+}
+function startM4Game() {
+    stopM4Game();
+    /* 2. 자모 떨어지는 속도 및 출현 양 2배 증량 (400ms -> 200ms) */
+    m4GameInterval = setInterval(() => {
+        const area = document.getElementById('m4-game-area');
+        if (!area || m4Phase !== 1) return;
+        const char = M4_ALL_JAMOS[Math.floor(Math.random() * M4_ALL_JAMOS.length)];
+        const item = document.createElement('div');
+        item.className = 'falling-jamo'; item.textContent = char;
+        item.style.left = `${Math.random() * (area.clientWidth - 50)}px`;
+        item.onclick = () => { if (m4CollectedJamos.length < 5) { m4CollectedJamos.push(char); renderM4Basket(); item.remove(); if (m4CollectedJamos.length === 5) startM4Phase2(); } };
+        item.addEventListener('animationend', () => item.remove());
+        area.appendChild(item);
+    }, 200);
+}
+function stopM4Game() { if (m4GameInterval) { clearInterval(m4GameInterval); m4GameInterval = null; } }
+function renderM4Basket() {
+    const b = document.getElementById('m4-basket'); if(!b) return;
+    b.innerHTML = m4CollectedJamos.map(j => `<div class="m4-collected-chip">${j}</div>`).join('');
+}
+function startM4Phase2() {
+    stopM4Game(); m4Phase = 2;
+    document.getElementById('m4-phase-1').style.display = 'none';
+    document.getElementById('m4-phase-2').style.display = 'flex';
+    const pool = document.getElementById('m4-cards-pool');
+    const shuffled = [...m4CollectedJamos].sort(() => Math.random() - 0.5);
+    pool.innerHTML = '';
+    shuffled.forEach((char, idx) => {
+        const card = document.createElement('div'); card.className = 'm4-jamo-card'; card.textContent = char; card.id = `m4-card-${idx}`;
+        card.onclick = () => {
+            const emptyIdx = m4SlotState.findIndex(v => v === null);
+            if (emptyIdx !== -1) { m4SlotState[emptyIdx] = { char, id: card.id }; card.style.visibility = 'hidden'; updateM4Slots(); }
+        };
+        pool.appendChild(card);
+    });
+}
+function clearM4Slot(idx) {
+    if (m4SlotState[idx]) {
+        const c = document.getElementById(m4SlotState[idx].id);
+        if (c) c.style.visibility = 'visible';
+        m4SlotState[idx] = null; updateM4Slots();
+    }
+}
+function updateM4Slots() {
+    document.querySelectorAll('.m4-slot').forEach((s, idx) => {
+        const item = m4SlotState[idx];
+        s.textContent = item ? item.char : '';
+        s.classList.toggle('filled', !!item);
+    });
+}
+
+/* MISSION 5 LOGIC */
+function initMission5() {
+    m5Selected = [];
+    const desc = document.getElementById('m-desc');
+    let items = [], prompt = "";
+
+    if (m5Step === 1) {
+        prompt = "[1단계] 잇몸소리를 모두 선택하세요.";
+        items = [...M5_CONSONANTS].sort(() => Math.random() - 0.5);
+    } else if (m5Step === 2) {
+        prompt = "[2단계] 파열음을 모두 선택하세요.";
+        items = [...M5_CONSONANTS].sort(() => Math.random() - 0.5);
+    } else if (m5Step === 3) {
+        prompt = "[3단계] 중모음을 모두 선택하세요.";
+        items = [...M5_VOWELS].sort(() => Math.random() - 0.5);
+    }
+    desc.textContent = prompt;
+
+    /* 3. 미션 지시문 가시성을 극대화하기 위한 모달 팝업 표시 */
+    showM5NoticeModal(prompt);
+
+    let html = `<div class="m5-grid">`;
+    items.forEach(char => {
+        html += `<div class="m5-tile" onclick="toggleM5Tile(this, '${char}')">${char}</div>`;
+    });
+    html += `</div>`;
+    document.getElementById('m-body').innerHTML = html;
+}
+
+function showM5NoticeModal(text) {
+    document.getElementById('modal-content').innerHTML = `
+        <div style="font-size: 20px; font-weight: bold; color: var(--accent-yellow); margin-bottom: 12px;">
+            <i class="fa-solid fa-bullhorn"></i> 미션 지시사항
+        </div>
+        <div style="font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 20px; word-break: keep-all;">
+            ${text}
+        </div>
+        <button class="btn btn-primary" style="width: 100%; padding: 10px;" onclick="closeModal()">확인 및 문제 풀기</button>
+    `;
+    document.getElementById('modal-popup').style.display = 'flex';
+}
+
+function toggleM5Tile(el, char) {
+    if (m5Selected.includes(char)) {
+        m5Selected = m5Selected.filter(c => c !== char);
+        el.classList.remove('selected');
+    } else {
+        m5Selected.push(char);
+        el.classList.add('selected');
+    }
+}
+
+/* MISSION 6 LOGIC */
+function initMission6() {
+    m6CurrentList = [...M6_ORIGINAL].sort(() => Math.random() - 0.5);
+    renderM6List();
+}
+function renderM6List() {
+    let html = `<div class="m6-list">`;
+    m6CurrentList.forEach((text, idx) => {
+        html += `
+            <div class="m6-item">
+                <span>${text}</span>
+                <div class="m6-btn-box">
+                    <button class="m6-btn" onclick="moveM6Item(${idx}, -1)"><i class="fa-solid fa-chevron-up"></i></button>
+                    <button class="m6-btn" onclick="moveM6Item(${idx}, 1)"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </div>`;
+    });
+    html += `</div>`;
+    document.getElementById('m-body').innerHTML = html;
+}
+function moveM6Item(idx, dir) {
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= m6CurrentList.length) return;
+    const temp = m6CurrentList[idx];
+    m6CurrentList[idx] = m6CurrentList[newIdx];
+    m6CurrentList[newIdx] = temp;
+    renderM6List();
+}
+
+/* MISSION 7 LOGIC */
+function initMission7() {
+    m7Switches = [false, false, false, false, false];
+    let html = `<div class="m7-container">`;
+    for(let i=0; i<5; i++) {
+        html += `
+            <div class="m7-obj-card">
+                <div class="m7-obj-icon" onclick="openM7Modal(${i})"><i class="fa-solid fa-box-open"></i></div>
+                <button class="m7-switch-btn" id="m7-sw-${i}" onclick="toggleM7Switch(${i})">
+                    <i class="fa-solid fa-power-off"></i> <span>OFF</span>
+                </button>
+            </div>`;
+    }
+    html += `</div>`;
+    document.getElementById('m-body').innerHTML = html;
+}
+function openM7Modal(idx) {
+    document.getElementById('modal-content').innerHTML = `<p style="font-size:18px; font-weight:bold; color:var(--accent-amber);">${M7_TEXTS[idx]}</p>`;
+    document.getElementById('modal-popup').style.display = 'flex';
+}
+function toggleM7Switch(idx) {
+    m7Switches[idx] = !m7Switches[idx];
+    const btn = document.getElementById(`m7-sw-${idx}`);
+    if (m7Switches[idx]) {
+        btn.classList.add('on'); btn.querySelector('span').textContent = 'ON';
+    } else {
+        btn.classList.remove('on'); btn.querySelector('span').textContent = 'OFF';
+    }
+}
+function closeModal() { document.getElementById('modal-popup').style.display = 'none'; }
+
+/* MISSION 8 LOGIC */
+function initMission8() {
+    document.getElementById('m-body').innerHTML = `
+        <div style="display:flex; flex-direction:column; align-items:center; gap:20px; width:100%;">
+            <div class="m8-passage">
+                복합양식성이란 문자, 소리, 그림, 사진, 동영상 등 다양한 양식이 결합하여 ( ① )를 구성하는 성질이다.<br>
+                ( ② )에서 복합양식성을 드러내는 다양한 양식은 시각적 요소와 청각적 요소로 구분할 수 있다.<br>
+                카메라와 대상 사이의 거리가 멀고, 인물의 몸 전체나 배경 전체를 촬영하는 기법은 ( ③ )이다.<br>
+                시나리오의 주요 장면을 간단한 그림으로 그려 순서대로 정리한 것을 ( ④ )이라고 한다.
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <label style="font-size:13px; color:var(--text-muted);">차례대로 글자 수 조합 비밀번호 (4자리)</label>
+                <input type="text" id="m8-pw" class="m8-pw-input" maxlength="4" placeholder="0000" autocomplete="off">
+            </div>
+        </div>`;
+}
+
+/* 2학기 데이터 미션 */
+function openSem2Mission() {
+    const allCleared = recovered.every(v => v === true);
+    if (!allCleared) {
+        showToast("모든 미션(1~8)을 완료해야 해제됩니다!");
+        return;
+    }
+    document.getElementById('modal-content').innerHTML = `
+        <i class="fa-solid fa-lock-open" style="font-size:40px; color:var(--accent-yellow); margin-bottom:15px;"></i>
+        <p style="font-size:16px; font-weight:bold;">1학기 데이터가 모두 복구되었습니다.<br>2학기 데이터에 접근합니다.</p>
+        <button class="btn btn-primary" style="margin-top:20px; padding:8px 20px;" onclick="showSem2AuthInput()">[ 확인 ]</button>`;
+    document.getElementById('modal-popup').style.display = 'flex';
+}
+
+function showSem2AuthInput() {
+    document.getElementById('modal-content').innerHTML = `
+        <p style="font-size:15px; margin-bottom:15px; color:var(--accent-cyan);">보안 해제를 위해 첫 번째 단원의 핵심 키워드를 입력해주세요</p>
+        <input type="text" id="sem2-keyword" class="form-control" style="text-align:center; font-size:18px;" placeholder="키워드 입력">
+        <button class="btn btn-primary" style="margin-top:15px; width:100%;" onclick="checkSem2Auth()">인증하기</button>`;
+}
+
+function checkSem2Auth() {
+    const val = document.getElementById('sem2-keyword').value.trim();
+    if (val === "공감") {
+        closeModal();
+        sendResultToGoogleSheet(currentTeam, 9);
+        document.getElementById('screen-dashboard').style.display = 'none';
+        document.getElementById('screen-sem2-complete').style.display = 'flex';
+    } else {
+        showToast("키워드가 올바르지 않습니다.");
+    }
+}
+
+/* CHECK CURRENT MISSION */
+function checkCurrentMission() {
+    let isCorrect = false;
+
+    if (currentMission === 1) {
+        const res1 = Array.from(document.querySelectorAll('#target-1-1 .word-chip')).map(c => c.textContent);
+        const res2 = Array.from(document.querySelectorAll('#target-1-2 .word-chip')).map(c => c.textContent);
+        if (JSON.stringify(res1) === JSON.stringify(m1_answers['1-1']) && JSON.stringify(res2) === JSON.stringify(m1_answers['1-2'])) isCorrect = true;
+        else showToast("순서가 올바르지 않습니다.");
+    } 
+    else if (currentMission === 2) {
+        const del = document.querySelectorAll('.sentence-span.deleted');
+        if (del.length === 1 && del[0].dataset.idx === "9") isCorrect = true;
+        else { showToast("잘못된 문장이 삭제되었습니다."); del.forEach(s => s.classList.remove('deleted')); }
+    }
+    else if (currentMission === 3) {
+        if (m3Answers[1] === "인과" && m3Answers[2] === "대조" && m3Answers[3] === "분류") isCorrect = true;
+        else { showToast("오답입니다. 초기화됩니다."); initMission3(); }
+    }
+    else if (currentMission === 4) {
+        if (m4Phase === 1) { showToast("자모 5개를 먼저 수집하세요!"); return; }
+        const seq = m4SlotState.map(i => i ? i.char : null);
+        if (JSON.stringify(seq) === JSON.stringify(M4_TARGET_SEQUENCE)) isCorrect = true;
+        else showToast("순서가 올바르지 않습니다.");
+    }
+    else if (currentMission === 5) {
+        const targetStep1 = ['ㄷ', 'ㄸ', 'ㅌ', 'ㅅ', 'ㅆ', 'ㄴ', 'ㄹ'];
+        const targetStep2 = ['ㅂ', 'ㅃ', 'ㅍ', 'ㄷ', 'ㄸ', 'ㅌ', 'ㄱ', 'ㄲ', 'ㅋ'];
+        const targetStep3 = ['ㅔ', 'ㅚ', 'ㅓ', 'ㅗ'];
+
+        let curTarget = m5Step === 1 ? targetStep1 : (m5Step === 2 ? targetStep2 : targetStep3);
+        const pass = m5Selected.length === curTarget.length && m5Selected.every(c => curTarget.includes(c));
+
+        if (pass) {
+            if (m5Step < 3) {
+                m5Step++;
+                showToast(`[${m5Step-1}단계 통과!] 다음 단계로 이동합니다.`, true);
+                initMission5();
+                return;
+            } else {
+                isCorrect = true;
+            }
+        } else {
+            showToast("오답입니다. 선택이 초기화됩니다.");
+            m5Selected = [];
+            document.querySelectorAll('.m5-tile').forEach(t => t.classList.remove('selected'));
+            return;
+        }
+    }
+    else if (currentMission === 6) {
+        if (JSON.stringify(m6CurrentList) === JSON.stringify(M6_ORIGINAL)) isCorrect = true;
+        else showToast("순서가 올바르지 않습니다.");
+    }
+    else if (currentMission === 7) {
+        const ans = [false, true, true, true, false];
+        if (JSON.stringify(m7Switches) === JSON.stringify(ans)) isCorrect = true;
+        else showToast("ON/OFF 스위치 설정이 올바르지 않습니다.");
+    }
+    else if (currentMission === 8) {
+        const pw = document.getElementById('m8-pw').value.trim();
+        if (pw === "2624") isCorrect = true;
+        else showToast("비밀번호가 올바르지 않습니다.");
+    }
+
+    if (isCorrect) {
+        stopM4Game();
+        showToast(`[SECTOR 0${currentMission}] 데이터 복원 성공!`, true);
+        recovered[currentMission - 1] = true;
+        localStorage.setItem('recovery_progress', JSON.stringify(recovered));
+        sendResultToGoogleSheet(currentTeam || "1팀", currentMission);
+        applyRecoveredUI();
+        updateProgress();
+        setTimeout(returnToDashboard, 1200);
+    }
+}
+</script>
 </body>
 </html>
