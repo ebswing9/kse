@@ -683,7 +683,7 @@
         <div class="dashboard-header">
             <div>
                 <h3 style="color: var(--accent-cyan); font-size: 16px;">
-                    <i class="fa-solid fa-microchip"></i> RECOVERY SECTOR 
+                    <i class="fa-solid fa-microchip"></i> RECOVERY SECTOR MAP 
                     <span id="user-team-display" style="color: var(--accent-amber); font-size: 14px; margin-left: 10px;"></span>
                 </h3>
                 <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">복원할 데이터 섹터를 선택하여 미션을 수행하세요</p>
@@ -1265,10 +1265,7 @@ function initMission5() {
 
 function showM5NoticeModal(text) {
     document.getElementById('modal-content').innerHTML = `
-        <div style="font-size: 20px; font-weight: bold; color: var(--accent-yellow); margin-bottom: 12px;">
-            [삭제 대상]
-        </div>
-        <div style="font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 20px; word-break: keep-all;">
+        <div style="font-size: 20px; font-weight: bold; color: #fff; margin-bottom: 20px; word-break: keep-all;">
             ${text}
         </div>
         <button class="btn btn-primary" style="width: 100%; padding: 10px;" onclick="closeModal()">확인</button>
