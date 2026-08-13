@@ -642,13 +642,13 @@
         </div>
         <div class="error-msg-box">
             <h2>⚠️ SYSTEM DATA CORRUPTED</h2>
-            <p>국어 교과서의 핵심 학습 데이터가 손상되었습니다.<br>
+            <p>국어 핵심 학습 데이터가 손상되었습니다.<br>
             손상된 <strong>데이터 섹터</strong>를 미션을 통해 복원하십시오.<br><br>
             데이터 복원 작업을 시작하려면 아래 버튼을 누르세요.</p>
         </div>
         <div class="btn-group">
-            <button class="btn btn-primary" onclick="showLoginScreen()">[YES] 복구 시작</button>
-            <button class="btn btn-secondary" onclick="showToast('시스템 복구가 지연되면 데이터가 영구 손실됩니다!')">[NO] 종료</button>
+            <button class="btn btn-primary" onclick="showLoginScreen()">복구 시작</button>
+            <button class="btn btn-secondary" onclick="showToast('시스템 복구가 지연되면 데이터가 영구 손실됩니다!')">종료</button>
         </div>
     </div>
 
@@ -659,14 +659,14 @@
             <div class="form-group">
                 <label for="team-select">소속 팀 선택</label>
                 <select id="team-select" class="form-control">
-                    <option value="">팀을 선택하세요...</option>
-                    <option value="1팀">1팀</option>
-                    <option value="2팀">2팀</option>
-                    <option value="3팀">3팀</option>
-                    <option value="4팀">4팀</option>
-                    <option value="5팀">5팀</option>
-                    <option value="6팀">6팀</option>
-                    <option value="7팀">7팀</option>
+                    <option value="">팀을 선택하세요</option>
+                    <option value="복구 1팀">복구 1팀</option>
+                    <option value="복구 2팀">복구 2팀</option>
+                    <option value="복구 3팀">복구 3팀</option>
+                    <option value="복구 4팀">복구 4팀</option>
+                    <option value="복구 5팀">복구 5팀</option>
+                    <option value="복구 6팀">복구 6팀</option>
+                    <option value="복구 7팀">복구 7팀</option>
                 </select>
             </div>
             <div class="form-group">
@@ -683,10 +683,10 @@
         <div class="dashboard-header">
             <div>
                 <h3 style="color: var(--accent-cyan); font-size: 16px;">
-                    <i class="fa-solid fa-microchip"></i> RECOVERY SECTOR MAP 
+                    <i class="fa-solid fa-microchip"></i> RECOVERY SECTOR 
                     <span id="user-team-display" style="color: var(--accent-amber); font-size: 14px; margin-left: 10px;"></span>
                 </h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">복원할 데이터 섹터를 선택하여 미션을 수행하세요.</p>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">복원할 데이터 섹터를 선택하여 미션을 수행하세요</p>
             </div>
             <div class="progress-container">
                 <span style="font-size: 12px; font-family: 'Fira Code';" id="progress-text">0 / 8</span>
@@ -749,7 +749,7 @@
             <div class="folder-card locked" id="folder-sem2" onclick="openSem2Mission()" style="grid-column: 1 / -1;">
                 <i class="fa-solid fa-lock folder-icon" id="sem2-icon" style="color: var(--accent-amber);"></i>
                 <div class="folder-title" id="sem2-title">[??] 2학기 데이터</div>
-                <div class="folder-status" id="sem2-status">LOCKED (1~8 완료 필요)</div>
+                <div class="folder-status" id="sem2-status">LOCKED (전체 섹터 복원 완료 시 해제)</div>
             </div>
         </div>
     </div>
@@ -762,14 +762,14 @@
                 <div class="mission-desc" id="m-desc">Mission description text goes here.</div>
             </div>
             <button class="btn btn-secondary" style="padding: 8px 16px;" onclick="returnToDashboard()">
-                <i class="fa-solid fa-arrow-left"></i> 목록으로
+                <i class="fa-solid fa-arrow-left"></i> 목록
             </button>
         </div>
 
         <div class="mission-body" id="m-body"></div>
 
         <div style="display: flex; justify-content: flex-end; margin-top: 10px; flex-shrink: 0;">
-            <button class="btn btn-primary" id="m-submit-btn" onclick="checkCurrentMission()">[EXECUTE] 데이터 복원 실행</button>
+            <button class="btn btn-primary" id="m-submit-btn" onclick="checkCurrentMission()">데이터 복원 실행</button>
         </div>
     </div>
 
@@ -779,7 +779,7 @@
             <i class="fa-solid fa-shield-halved"></i>
         </div>
         <h1 style="color: var(--accent-yellow); font-size: 36px; letter-spacing: 2px;">MISSION COMPLETE</h1>
-        <p style="color: var(--text-muted); font-size: 14px;">선생님에게 제출하세요</p>
+        <p style="color: var(--text-muted); font-size: 14px;">[국어 좋아요]를 작성하여 선생님께 제출하세요</p>
         <button class="btn btn-secondary" style="margin-top: 30px;" onclick="returnToDashboard()">[ 확인 ]</button>
     </div>
 
@@ -796,13 +796,13 @@
 
 <script>
 const TEAM_CREDENTIALS = {
-    '1팀': ['문득', 'ansemr', 'ANSEMR'],
-    '2팀': ['이번', 'dlqjs', 'DLQJS'],
-    '3팀': ['어머나', 'djajsk', 'DJAJSK'],
-    '4팀': ['처음', 'cjdma', 'CJDMA'],
-    '5팀': ['이런', 'dlfjs', 'DLFJS'],
-    '6팀': ['내년', 'sosus', 'SOSUS'],
-    '7팀': ['그리고', 'rmflrh', 'RMFLRH']
+    '복구 1팀': ['문득', 'ansemr', 'ANSEMR'],
+    '복구 2팀': ['이번', 'dlqjs', 'DLQJS'],
+    '복구 3팀': ['어머나', 'djajsk', 'DJAJSK'],
+    '복구 4팀': ['처음', 'cjdma', 'CJDMA'],
+    '복구 5팀': ['이런', 'dlfjs', 'DLFJS'],
+    '복구 6팀': ['내년', 'sosus', 'SOSUS'],
+    '복구 7팀': ['그리고', 'rmflrh', 'RMFLRH']
 };
 
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoJZQaMGXPxqt8NyeZbB6k7mHzLRz5M6YocaKqeGsGxYZFeq8vwpB3qw0xSqnLD5WP/exec";
@@ -1051,8 +1051,8 @@ function openMission(id) {
     body.innerHTML = '';
 
     if (id === 1) {
-        title.innerHTML = `<i class="fa-solid fa-align-center"></i> [01] 시의 화자 / 단어 배열`;
-        desc.textContent = "화자의 뜻과 역할에 대한 설명을 올바르게 배열하세요.";
+        title.innerHTML = `<i class="fa-solid fa-align-center"></i> [01] 시의 화자`;
+        desc.textContent = "설명을 올바르게 배열하세요.";
         body.innerHTML = `
             <div class="rearrange-container">
                 <div class="sub-quiz-card">
@@ -1068,8 +1068,8 @@ function openMission(id) {
             </div>`;
         initMission1();
     } else if (id === 2) {
-        title.innerHTML = `<i class="fa-solid fa-book-open"></i> [02] 소설의 서술자 / 오류 문장 삭제`;
-        desc.textContent = "지문에서 소설의 흐름상 어색하거나 잘못 들어간 '오류 문장'을 클릭하여 삭제하세요.";
+        title.innerHTML = `<i class="fa-solid fa-book-open"></i> [02] 소설의 서술자`;
+        desc.textContent = "시점 오류 문장을 클릭하여 삭제하세요.";
         const passage = [
             "우리는 나란히 누워서 노래를 들었다.", "리베라는 완벽한 하모니를 만들 줄 알았다.",
             "드보르자크의 원곡과는 다른 종류의 아름다움이 있었다.", "할머니는 살며시 눈을 뜨고 나를 바라봤다.",
@@ -1077,7 +1077,7 @@ function openMission(id) {
             "역시나 이해되지 않았다.", "내가 애매한 표정을 선택하자 할머니는 너털웃음을 지었다.",
             "\"나 갈 때 이 노래 부르면서 가야겠다. 우리 같이 연습하자!\"",
             "\"귀가하실 때 부르겠다는 말씀이십니까?\"", "루빈은 역시나 엉뚱하게 대꾸했다.",
-            "집으로 걸어가면서 부르기엔 리듬이 느려적합하지 않았다.", "좀 더 경쾌한 노래를 검색하려다 할머니가 원하지 않을 것 같아 그만두었다."
+            "집으로 걸어가면서 부르기엔 리듬이 느려 적합하지 않았다.", "좀 더 경쾌한 노래를 검색하려다 할머니가 원하지 않을 것 같아 그만두었다."
         ];
         let htmlContent = `<div class="text-passage-box">`;
         passage.forEach((sent, idx) => {
@@ -1086,12 +1086,12 @@ function openMission(id) {
         htmlContent += `</div>`;
         body.innerHTML = htmlContent;
     } else if (id === 3) {
-        title.innerHTML = `<i class="fa-solid fa-layer-group"></i> [03] 설명 방법 매칭`;
-        desc.textContent = "설명 방법 아이템을 클릭한 후, 예시 문장의 빈칸 상자를 눌러 알맞게 매칭하세요.";
+        title.innerHTML = `<i class="fa-solid fa-layer-group"></i> [03] 설명 방법`;
+        desc.textContent = "설명 방법을 알맞게 연결하세요.";
         initMission3();
     } else if (id === 4) {
-        title.innerHTML = `<i class="fa-solid fa-brain"></i> [04] 논증 방법 / 자모 수집 & 조합`;
-        desc.textContent = "[1단계] 떨어지는 자모 중 필요한 자모 5개를 클릭하여 수집하세요.";
+        title.innerHTML = `<i class="fa-solid fa-brain"></i> [04] 논증 방법`;
+        desc.textContent = "필요한 글자를 클릭하여 수집하세요.";
         initMission4();
     } else if (id === 5) {
         title.innerHTML = `<i class="fa-solid fa-language"></i> [05] 음운 체계`;
@@ -1099,15 +1099,15 @@ function openMission(id) {
         initMission5();
     } else if (id === 6) {
         title.innerHTML = `<i class="fa-solid fa-list-ol"></i> [06] 발표 과정`;
-        desc.textContent = "올바른 발표 과정 순서에 맞게 항목들을 재배치하세요.";
+        desc.textContent = "발표 과정 순서에 맞게 항목을 재배치하세요.";
         initMission6();
     } else if (id === 7) {
         title.innerHTML = `<i class="fa-solid fa-lightbulb"></i> [07] 역설`;
-        desc.textContent = "각 오브젝트를 클릭하여 문장을 확인하고, 역설법에 해당하는 것의 버튼을 ON으로 켜세요.";
+        desc.textContent = "각 오브젝트를 클릭하여 문장을 확인하고, 역설에 해당하는 것의 전원을 켜세요.";
         initMission7();
     } else if (id === 8) {
         title.innerHTML = `<i class="fa-solid fa-film"></i> [08] 영상 매체 자료`;
-        desc.textContent = "지문의 괄호 ①~④에 들어갈 말의 글자 수를 차례대로 조합하여 비밀번호를 입력하세요.";
+        desc.textContent = "①~④에 들어갈 말의 글자 수를 차례대로 조합하세요.";
         initMission8();
     }
 }
@@ -1148,9 +1148,9 @@ function initMission3() {
     let html = `<div class="m3-container"><div class="m3-pool-box"><div class="m3-pool-title"><i class="fa-solid fa-hand-pointer"></i> 설명 방법 선택</div><div class="m3-chips-wrapper">`;
     methods.forEach(m => { html += `<div class="m3-chip" onclick="selectM3Chip(this, '${m}')">${m}</div>`; });
     html += `</div></div><div class="m3-sentence-list">
-        <div class="m3-sentence-item"><div class="m3-sentence-text">1. 화성이 붉게 빛나는 까닭은 항성인 태양의 빛을 반사하기 때문이다.</div><div class="m3-target-slot" id="m3-slot-1" onclick="applyM3Chip(1)">[ 클릭하여 지정 ]</div></div>
-        <div class="m3-sentence-item"><div class="m3-sentence-text">2. 스스로 빛을 내는 항성인 태양과 달리 화성은 스스로 빛을 내지 않는 행성이다.</div><div class="m3-target-slot" id="m3-slot-2" onclick="applyM3Chip(2)">[ 클릭하여 지정 ]</div></div>
-        <div class="m3-sentence-item"><div class="m3-sentence-text">3. 화성과 지구는 지구형 행성에 속한다.</div><div class="m3-target-slot" id="m3-slot-3" onclick="applyM3Chip(3)">[ 클릭하여 지정 ]</div></div>
+        <div class="m3-sentence-item"><div class="m3-sentence-text">화성이 붉게 빛나는 까닭은 항성인 태양의 빛을 반사하기 때문이다.</div><div class="m3-target-slot" id="m3-slot-1" onclick="applyM3Chip(1)">[ 클릭하여 지정 ]</div></div>
+        <div class="m3-sentence-item"><div class="m3-sentence-text">스스로 빛을 내는 항성인 태양과 달리 화성은 스스로 빛을 내지 않는 행성이다.</div><div class="m3-target-slot" id="m3-slot-2" onclick="applyM3Chip(2)">[ 클릭하여 지정 ]</div></div>
+        <div class="m3-sentence-item"><div class="m3-sentence-text">화성과 지구는 지구형 행성에 속한다.</div><div class="m3-target-slot" id="m3-slot-3" onclick="applyM3Chip(3)">[ 클릭하여 지정 ]</div></div>
     </div></div>`;
     document.getElementById('m-body').innerHTML = html;
 }
@@ -1241,13 +1241,13 @@ function initMission5() {
     let items = [], prompt = "";
 
     if (m5Step === 1) {
-        prompt = "[1단계] 잇몸소리를 모두 선택하세요.";
+        prompt = "잇몸소리를 모두 선택하세요.";
         items = [...M5_CONSONANTS].sort(() => Math.random() - 0.5);
     } else if (m5Step === 2) {
-        prompt = "[2단계] 파열음을 모두 선택하세요.";
+        prompt = "파열음을 모두 선택하세요.";
         items = [...M5_CONSONANTS].sort(() => Math.random() - 0.5);
     } else if (m5Step === 3) {
-        prompt = "[3단계] 중모음을 모두 선택하세요.";
+        prompt = "중모음을 모두 선택하세요.";
         items = [...M5_VOWELS].sort(() => Math.random() - 0.5);
     }
     desc.textContent = prompt;
@@ -1266,12 +1266,12 @@ function initMission5() {
 function showM5NoticeModal(text) {
     document.getElementById('modal-content').innerHTML = `
         <div style="font-size: 20px; font-weight: bold; color: var(--accent-yellow); margin-bottom: 12px;">
-            <i class="fa-solid fa-bullhorn"></i> 미션 지시사항
+            [지시사항]
         </div>
         <div style="font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 20px; word-break: keep-all;">
             ${text}
         </div>
-        <button class="btn btn-primary" style="width: 100%; padding: 10px;" onclick="closeModal()">확인 및 문제 풀기</button>
+        <button class="btn btn-primary" style="width: 100%; padding: 10px;" onclick="closeModal()">확인</button>
     `;
     document.getElementById('modal-popup').style.display = 'flex';
 }
@@ -1357,7 +1357,7 @@ function initMission8() {
                 시나리오의 주요 장면을 간단한 그림으로 그려 순서대로 정리한 것을 ( ④ )이라고 한다.
             </div>
             <div style="display:flex; flex-direction:column; align-items:center;">
-                <label style="font-size:13px; color:var(--text-muted);">차례대로 글자 수 조합 비밀번호 (4자리)</label>
+                <label style="font-size:13px; color:var(--text-muted);">비밀번호</label>
                 <input type="text" id="m8-pw" class="m8-pw-input" maxlength="4" placeholder="0000" autocomplete="off">
             </div>
         </div>`;
@@ -1367,7 +1367,7 @@ function initMission8() {
 function openSem2Mission() {
     const allCleared = recovered.every(v => v === true);
     if (!allCleared) {
-        showToast("모든 미션(1~8)을 완료해야 해제됩니다!");
+        showToast("전체 섹터가 복원되었을 시 해제됩니다!");
         return;
     }
     document.getElementById('modal-content').innerHTML = `
@@ -1416,7 +1416,7 @@ function checkCurrentMission() {
         else { showToast("오답입니다. 초기화됩니다."); initMission3(); }
     }
     else if (currentMission === 4) {
-        if (m4Phase === 1) { showToast("자모 5개를 먼저 수집하세요!"); return; }
+        if (m4Phase === 1) { showToast("글자 5개를 먼저 수집하세요!"); return; }
         const seq = m4SlotState.map(i => i ? i.char : null);
         if (JSON.stringify(seq) === JSON.stringify(M4_TARGET_SEQUENCE)) isCorrect = true;
         else showToast("순서가 올바르지 않습니다.");
@@ -1432,7 +1432,7 @@ function checkCurrentMission() {
         if (pass) {
             if (m5Step < 3) {
                 m5Step++;
-                showToast(`[${m5Step-1}단계 통과!] 다음 단계로 이동합니다.`, true);
+                showToast(`[${m5Step-1}단계 통과] 다음 단계로 이동합니다.`, true);
                 initMission5();
                 return;
             } else {
@@ -1465,7 +1465,7 @@ function checkCurrentMission() {
         showToast(`[SECTOR 0${currentMission}] 데이터 복원 성공!`, true);
         recovered[currentMission - 1] = true;
         localStorage.setItem('recovery_progress', JSON.stringify(recovered));
-        sendResultToGoogleSheet(currentTeam || "1팀", currentMission);
+        sendResultToGoogleSheet(currentTeam || "복구 1팀", currentMission);
         applyRecoveredUI();
         updateProgress();
         setTimeout(returnToDashboard, 1200);
